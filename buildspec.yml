@@ -1,0 +1,30 @@
+version: 0.2
+
+env:
+  variables:
+    JAVA_HOME: "/usr/lib/jvm/java-8-openjdk-amd64"
+  parameter-store:
+    LOGIN_PASSWORD: /CodeBuild/dockerLoginPassword
+
+phases:
+  install:
+    commands:
+      - echo Installing Maven...
+      - apt-get update -y
+      - apt-get install -y maven
+  pre_build:
+    commands:
+      - echo Logging into Docker...
+      - docker login -u User -p $LOGIN_PASSWORD
+  build:
+    commands:
+      - echo Building the app...
+      - mvn clean install
+  post_build:
+    commands:
+      - echo Build completed on `date`
+
+artifacts:
+  files:
+    - target/*.jar
+  discard-paths: yes
